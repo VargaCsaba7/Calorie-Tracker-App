@@ -8,6 +8,7 @@ from app.db.database import Base
 
 if TYPE_CHECKING:
     from app.models.meal import Meal
+    from app.models.progress import RestDay, WeightEntry
     from app.models.workout import Workout
 
 
@@ -40,6 +41,12 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan"
     )
     meals: Mapped[list["Meal"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    rest_days: Mapped[list["RestDay"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    weight_entries: Mapped[list["WeightEntry"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
 

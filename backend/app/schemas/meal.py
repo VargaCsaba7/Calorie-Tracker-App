@@ -35,3 +35,16 @@ class MealRead(MealBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+
+class DailyNutritionSummary(BaseModel):
+    """Totals for one day, compared against the user's calorie goal."""
+
+    date: dt.date
+    calories: int
+    protein: float
+    carbs: float
+    fat: float
+    meal_count: int
+    calorie_goal: int
+    calories_remaining: int

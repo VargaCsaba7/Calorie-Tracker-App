@@ -1,4 +1,5 @@
-from app.schemas.meal import MealCreate, MealRead, MealUpdate
+from app.schemas.auth import Token
+from app.schemas.meal import DailyNutritionSummary, MealCreate, MealRead, MealUpdate
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.schemas.workout import (
     ExerciseCreate,
@@ -11,6 +12,7 @@ from app.schemas.workout import (
 )
 
 __all__ = [
+    "Token",
     "UserCreate",
     "UserRead",
     "UserUpdate",
@@ -24,4 +26,5 @@ __all__ = [
     "MealCreate",
     "MealRead",
     "MealUpdate",
+    "DailyNutritionSummary",
 ]

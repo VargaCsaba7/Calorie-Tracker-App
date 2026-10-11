@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthProvider'
 import { ProtectedRoute } from './auth/ProtectedRoute'
+import { Layout } from './components/Layout'
 
 // Temporary until the real pages are built
 function Placeholder({ title }: { title: string }) {
@@ -20,9 +21,11 @@ function App() {
           <Route path="/register" element={<Placeholder title="Register" />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Placeholder title="Dashboard" />} />
-            <Route path="/workouts" element={<Placeholder title="Workouts" />} />
-            <Route path="/nutrition" element={<Placeholder title="Nutrition" />} />
+            <Route element={<Layout />}>
+              <Route path="/" element={<Placeholder title="Dashboard" />} />
+              <Route path="/workouts" element={<Placeholder title="Workouts" />} />
+              <Route path="/nutrition" element={<Placeholder title="Nutrition" />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -5,14 +5,15 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 ## Tech stack
 
 **Backend:** Python, FastAPI, SQLAlchemy, Pydantic, JWT auth, MySQL
-**Frontend:** React, TypeScript, Vite, Tailwind CSS, React Router, Axios
+**Frontend:** React, TypeScript, Vite, Tailwind CSS, React Router, Axios, Recharts
 
-## Features (planned)
+## Features
 
-- User registration and login (JWT)
-- Workout log: workouts → exercises → sets (weight × reps)
-- Nutrition log: meals with calories, protein, carbs and fat
-- Dashboard with progress stats
+- Sign up / log in with JWT, stays logged in after reload
+- **Workout logger:** log a workout with any number of exercises and sets (weight × reps), see your history with total volume
+- **Nutrition tracker:** add meals with calories and macros for any day, see daily totals against your calorie goal
+- **Dashboard:** today's calories and macros, calories of the last 7 days vs. goal, training volume per workout
+- Responsive, works on phones too
 
 ## Running the backend
 

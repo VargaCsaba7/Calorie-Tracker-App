@@ -25,7 +25,7 @@ export function WorkoutsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Workouts</h1>
+      <h1 className="text-4xl font-bold">Workouts</h1>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
         <Card title="Log a workout" className="lg:self-start">

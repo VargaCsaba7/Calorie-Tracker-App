@@ -5,6 +5,7 @@ import { getErrorMessage } from '../api/errors'
 import type { ActivityLevel, Sex, User } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { ProgressSection } from '../components/profile/ProgressSection'
+import { RecordsSection } from '../components/profile/RecordsSection'
 import { Alert } from '../components/ui/Alert'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
@@ -38,6 +39,7 @@ export function ProfilePage() {
         <GoalsForm user={user} />
       </div>
 
+      <RecordsSection />
       <ProgressSection />
     </div>
   )

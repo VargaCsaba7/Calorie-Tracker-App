@@ -11,7 +11,8 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 
 - Sign up / log in with JWT, stays logged in after reload
 - **Workout logger:** log a workout with any number of exercises and sets (weight × reps), see your history with total volume
-- **Nutrition tracker:** add meals with calories and macros for any day, see daily totals against your calorie goal
+- **Nutrition tracker:** search ~75 common foods (Hungarian names) and packaged products from [Open Food Facts](https://world.openfoodfacts.org) with photos, enter the grams and the server calculates calories and macros; or describe a meal and let an AI (Claude API) estimate it; or type the numbers by hand
+- **Personal records:** best set and estimated one-rep max (Epley) for every exercise
 - **Profile:** height, weight, age and activity level give your daily calorie needs (Mifflin-St Jeor formula); set a calorie goal and optional protein/carbs/fat targets
 - **Dashboard:** today's calories on a barbell (each plate is 100 kcal), macro targets, your body stats, calories of the last 7 days vs. goal, training volume per workout
 - Responsive, works on phones too
@@ -71,3 +72,17 @@ Open http://localhost:5173. The dev server proxies `/api` requests to the backen
 | GET / PATCH / DELETE | `/api/meals/{id}` | single meal |
 
 All endpoints except register and login need an `Authorization: Bearer <token>` header.
+
+## AI meal estimate (optional)
+
+On the Nutrition page, "Describe (AI)" sends a short description ("a plate of goulash with two slices of bread")
+to Claude, which answers in a fixed JSON schema (structured outputs) with calories and macros. The estimate only
+pre-fills the manual form, so the user checks it before saving.
+
+To turn it on, add an API key from https://console.anthropic.com to `backend/.env`:
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Without a key everything else works and the AI tab says it isn't set up.

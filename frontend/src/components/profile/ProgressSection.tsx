@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { authApi } from '../../api/auth'
 import { getErrorMessage } from '../../api/errors'
 import { progressApi } from '../../api/progress'
@@ -10,6 +10,7 @@ import { addDays, formatDate, today } from '../../lib/date'
 import { formatWeight } from '../../lib/workout'
 import { Alert } from '../ui/Alert'
 import { Button } from '../ui/Button'
+import { Collapsible } from '../ui/Collapsible'
 import { Field } from '../ui/Field'
 import { WeeklyChart } from './WeeklyChart'
 
@@ -17,41 +18,10 @@ const WEEKS = 12
 
 /** Collapsible: weekly weigh-ins and 12-week trends with charts. */
 export function ProgressSection() {
-  const [isOpen, setIsOpen] = useState(false)
-  const contentId = useId()
-
   return (
-    <section className="rounded-2xl border border-black/5 bg-white">
-      <h2>
-        <button
-          type="button"
-          aria-expanded={isOpen}
-          aria-controls={contentId}
-          onClick={() => setIsOpen((open) => !open)}
-          className="flex w-full items-center justify-between gap-4 rounded-2xl p-5 text-left hover:bg-black/[0.02] focus-visible:outline-2 focus-visible:outline-plate-blue"
-        >
-          <span>
-            <span className="block text-2xl font-bold">Weekly progress</span>
-            <span className="block font-sans text-sm font-normal tracking-normal text-brand-500">
-              Weigh-ins and your averages over the last {WEEKS} weeks
-            </span>
-          </span>
-          <svg
-            viewBox="0 0 20 20"
-            aria-hidden="true"
-            className={`size-6 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          >
-            <path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-      </h2>
-      {/* Only mounted when open, so the data loads on first expand */}
-      {isOpen && (
-        <div id={contentId} className="border-t border-black/5 p-5">
-          <ProgressContent />
-        </div>
-      )}
-    </section>
+    <Collapsible title="Weekly progress" subtitle={`Weigh-ins and your averages over the last ${WEEKS} weeks`}>
+      <ProgressContent />
+    </Collapsible>
   )
 }
 

@@ -18,7 +18,7 @@ export function VolumeChart({ data }: { data: WorkoutVolumePoint[] }) {
           cursor={{ stroke: '#94a3b8', strokeDasharray: '3 3' }}
           labelFormatter={(label, payload) => {
             const point = payload?.[0]?.payload as WorkoutVolumePoint | undefined
-            return point ? `${point.name} · ${label}` : label
+            return point ? `${point.name}, ${label}` : label
           }}
           formatter={(value) => [`${Number(value).toLocaleString('en-GB')} kg`, 'Volume']}
           {...tooltipStyle}

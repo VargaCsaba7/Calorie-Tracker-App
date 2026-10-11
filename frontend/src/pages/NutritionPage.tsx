@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getErrorMessage } from '../api/errors'
 import { mealsApi } from '../api/meals'
 import type { Meal } from '../api/types'
+import { useAuth } from '../auth/useAuth'
 import { DateSwitcher } from '../components/DateSwitcher'
 import { BarbellMeter } from '../components/nutrition/BarbellMeter'
 import { MealForm } from '../components/nutrition/MealForm'
@@ -12,6 +13,7 @@ import { useApi } from '../hooks/useApi'
 import { formatDate, today } from '../lib/date'
 
 export function NutritionPage() {
+  const { user } = useAuth()
   const [date, setDate] = useState(today())
   const summary = useApi(() => mealsApi.summary(date), [date])
   const meals = useApi(() => mealsApi.list({ date_from: date, date_to: date }), [date])
@@ -47,6 +49,7 @@ export function NutritionPage() {
       {summary.data && (
         <BarbellMeter
           title={dayTitle}
+          macroGoals={user ? { protein: user.protein_goal, carbs: user.carbs_goal, fat: user.fat_goal } : undefined}
           calories={summary.data.calories}
           goal={summary.data.calorie_goal}
           protein={summary.data.protein}

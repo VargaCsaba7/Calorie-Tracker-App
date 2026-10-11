@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { formatGrams, MACROS, type MacroValues } from '../../lib/macros'
+import { formatGrams, MACROS, type MacroKey, type MacroValues } from '../../lib/macros'
 
 const KCAL_PER_PLATE = 100
 
@@ -16,6 +16,8 @@ interface BarbellMeterProps extends MacroValues {
   goal: number
   title?: string
   action?: ReactNode
+  /** Optional daily targets in grams, shown under each macro */
+  macroGoals?: Record<MacroKey, number | null>
 }
 
 /**
@@ -38,7 +40,7 @@ function platesPerMacro(count: number, macros: MacroValues): (MacroValues & { ot
   return { protein: result[0], carbs: result[1], fat: result[2], other: 0 }
 }
 
-export function BarbellMeter({ calories, goal, protein, carbs, fat, title, action }: BarbellMeterProps) {
+export function BarbellMeter({ calories, goal, protein, carbs, fat, title, action, macroGoals }: BarbellMeterProps) {
   const slots = Math.max(1, Math.ceil(goal / KCAL_PER_PLATE))
   const loaded = Math.min(slots, Math.round(calories / KCAL_PER_PLATE))
   const counts = platesPerMacro(loaded, { protein, carbs, fat })
@@ -115,19 +117,35 @@ export function BarbellMeter({ calories, goal, protein, carbs, fat, title, actio
           />
         ))}
       </svg>
+      {loaded === 0 && (
+        <p className="-mt-2 text-center text-sm text-steel">Nothing logged yet. Every 100 kcal you add loads a plate.</p>
+      )}
 
-      <ul className="mt-5 grid grid-cols-3 gap-3">
-        {MACROS.map((macro) => (
-          <li key={macro.key} className="flex items-center gap-2.5">
-            <span className="h-8 w-2 shrink-0 rounded-sm" style={{ backgroundColor: macro.color }} />
-            <div>
-              <p className="font-display text-2xl leading-none font-semibold tabular-nums">
-                {formatGrams({ protein, carbs, fat }[macro.key])} g
-              </p>
-              <p className="text-sm text-steel">{macro.label}</p>
-            </div>
-          </li>
-        ))}
+      <ul className="mt-5 grid grid-cols-3 gap-3 sm:gap-6">
+        {MACROS.map((macro) => {
+          const eaten = { protein, carbs, fat }[macro.key]
+          const target = macroGoals?.[macro.key] ?? null
+          return (
+            <li key={macro.key} className="flex gap-2.5">
+              <span className="mt-0.5 h-8 w-2 shrink-0 rounded-sm" style={{ backgroundColor: macro.color }} />
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-2xl leading-none font-semibold tabular-nums">
+                  {formatGrams(eaten)}
+                  {target !== null && <span className="text-lg text-steel"> / {target}</span>} g
+                </p>
+                <p className="text-sm text-steel">{macro.label}</p>
+                {target !== null && target > 0 && (
+                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${Math.min(eaten / target, 1) * 100}%`, backgroundColor: macro.color }}
+                    />
+                  </div>
+                )}
+              </div>
+            </li>
+          )
+        })}
       </ul>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-steel">Each plate is {KCAL_PER_PLATE} kcal.</p>

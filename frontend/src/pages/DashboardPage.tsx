@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router'
 import { mealsApi } from '../api/meals'
 import { workoutsApi } from '../api/workouts'
 import { useAuth } from '../auth/useAuth'
+import { BodyPanel } from '../components/dashboard/BodyPanel'
 import { CaloriesChart } from '../components/dashboard/CaloriesChart'
-import { GoalEditor } from '../components/dashboard/GoalEditor'
+import { ButtonLink } from '../components/ui/Button'
 import { StatRow, StatTile } from '../components/dashboard/StatTile'
 import { VolumeChart } from '../components/dashboard/VolumeChart'
 import { BarbellMeter } from '../components/nutrition/BarbellMeter'
@@ -67,12 +67,11 @@ export function DashboardPage() {
           </p>
           <h1 className="text-4xl font-bold">Hi, {user?.username}</h1>
         </div>
-        <GoalEditor onSaved={() => void summary.reload()} />
       </div>
 
       <Alert message={summary.error ?? weekMeals.error ?? workouts.error} />
 
-      {summary.data && (
+      {summary.data && user && (
         <BarbellMeter
           title="Eaten today"
           calories={summary.data.calories}
@@ -80,16 +79,16 @@ export function DashboardPage() {
           protein={summary.data.protein}
           carbs={summary.data.carbs}
           fat={summary.data.fat}
+          macroGoals={{ protein: user.protein_goal, carbs: user.carbs_goal, fat: user.fat_goal }}
           action={
-            <Link
-              to="/nutrition"
-              className="rounded-full bg-white px-4 py-1.5 font-display text-lg font-semibold text-rubber hover:bg-chalk"
-            >
+            <ButtonLink to="/nutrition" variant="inverse">
               Log a meal
-            </Link>
+            </ButtonLink>
           }
         />
       )}
+
+      {user && <BodyPanel user={user} />}
 
       <StatRow>
         <StatTile
@@ -125,9 +124,9 @@ export function DashboardPage() {
         <Card
           title="Volume per workout"
           action={
-            <Link to="/workouts" className="text-sm font-medium text-brand-600 underline-offset-4 hover:underline">
+            <ButtonLink to="/workouts" variant="secondary" size="sm">
               Log a workout
-            </Link>
+            </ButtonLink>
           }
         >
           {volumeSeries.length > 0 ? (

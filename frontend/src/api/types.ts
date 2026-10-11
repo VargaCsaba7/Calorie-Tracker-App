@@ -112,6 +112,28 @@ export interface DailyNutritionSummary {
   calories_remaining: number
 }
 
+// --- Progress ---
+
+export interface RestDay {
+  date: string
+}
+
+export interface WeightEntry {
+  date: string
+  weight_kg: number
+}
+
+export interface WeeklyStats {
+  week_start: string
+  workouts: number
+  volume_kg: number
+  rest_days: number
+  days_logged: number
+  avg_calories: number | null
+  avg_protein: number | null
+  avg_weight_kg: number | null
+}
+
 export interface ListParams {
   date_from?: string
   date_to?: string

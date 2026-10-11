@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { getErrorMessage } from '../../api/errors'
 import type { WorkoutInput } from '../../api/types'
 import { workoutsApi } from '../../api/workouts'
-import { today } from '../../lib/date'
 import { Alert } from '../ui/Alert'
 import { Button } from '../ui/Button'
 import { Field } from '../ui/Field'
@@ -46,9 +45,15 @@ const newSet = (previous?: SetDraft): SetDraft => ({
 
 const newExercise = (): ExerciseDraft => ({ id: crypto.randomUUID(), name: '', sets: [newSet()] })
 
-export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
+interface WorkoutFormProps {
+  /** Controlled, so the calendar can pick the day */
+  date: string
+  onDateChange: (date: string) => void
+  onSaved: () => void
+}
+
+export function WorkoutForm({ date, onDateChange, onSaved }: WorkoutFormProps) {
   const [name, setName] = useState('')
-  const [date, setDate] = useState(today())
   const [exercises, setExercises] = useState<ExerciseDraft[]>(() => [newExercise()])
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -110,7 +115,7 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <Field label="Date" type="date" required value={date} onChange={(e) => setDate(e.target.value)} />
+        <Field label="Date" type="date" required value={date} onChange={(e) => onDateChange(e.target.value)} />
       </div>
       <datalist id="workout-suggestions">
         {WORKOUT_SUGGESTIONS.map((option) => (

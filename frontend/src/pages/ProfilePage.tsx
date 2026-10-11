@@ -4,6 +4,7 @@ import { authApi } from '../api/auth'
 import { getErrorMessage } from '../api/errors'
 import type { ActivityLevel, Sex, User } from '../api/types'
 import { useAuth } from '../auth/useAuth'
+import { ProgressSection } from '../components/profile/ProgressSection'
 import { Alert } from '../components/ui/Alert'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
@@ -32,9 +33,12 @@ export function ProfilePage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <BodyForm user={user} />
+        {/* Remount when a weigh-in changes the weight, so the field shows the new value */}
+        <BodyForm key={user.weight_kg ?? 'none'} user={user} />
         <GoalsForm user={user} />
       </div>
+
+      <ProgressSection />
     </div>
   )
 }

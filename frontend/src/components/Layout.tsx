@@ -27,7 +27,7 @@ export function Layout() {
                 to={link.to}
                 end
                 className={({ isActive }) =>
-                  `flex-1 rounded-full px-3.5 py-1.5 text-center font-display text-lg font-semibold tracking-wide whitespace-nowrap sm:flex-none ${
+                  `flex-1 rounded-full px-2 py-1.5 text-center font-display text-base font-semibold tracking-wide whitespace-nowrap sm:flex-none sm:px-3.5 sm:text-lg ${
                     isActive ? 'bg-white text-rubber' : 'text-white/70 hover:bg-white/10 hover:text-white'
                   }`
                 }

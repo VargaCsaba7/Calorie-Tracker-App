@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/AuthProvider'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
+import { NutritionPage } from './pages/NutritionPage'
 import { RegisterPage } from './pages/RegisterPage'
 
 // Temporary until the real pages are built
@@ -26,7 +27,7 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/" element={<Placeholder title="Dashboard" />} />
               <Route path="/workouts" element={<Placeholder title="Workouts" />} />
-              <Route path="/nutrition" element={<Placeholder title="Nutrition" />} />
+              <Route path="/nutrition" element={<NutritionPage />} />
             </Route>
           </Route>
 

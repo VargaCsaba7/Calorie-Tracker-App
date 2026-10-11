@@ -33,3 +33,20 @@ uvicorn app.main:app --reload
 ```
 
 API docs are available at http://localhost:8000/docs.
+
+Copy `backend/.env.example` to `backend/.env` and set a real `SECRET_KEY`.
+
+## API
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/auth/register` | create account |
+| POST | `/api/auth/login` | get JWT token (username or email) |
+| GET / PATCH | `/api/users/me` | current user, update calorie goal |
+| GET / POST | `/api/workouts` | list (filter by `date_from`, `date_to`) / create with exercises and sets |
+| GET / PATCH / DELETE | `/api/workouts/{id}` | single workout |
+| GET / POST | `/api/meals` | list / create |
+| GET | `/api/meals/summary?date=` | daily calorie and macro totals |
+| GET / PATCH / DELETE | `/api/meals/{id}` | single meal |
+
+All endpoints except register and login need an `Authorization: Bearer <token>` header.

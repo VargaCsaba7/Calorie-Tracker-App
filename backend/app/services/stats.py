@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models import Exercise, Meal, RestDay, WeightEntry, Workout, WorkoutSet
-from app.schemas import WeeklyStats
+from app.schemas import PersonalRecord, WeeklyStats
 
 
 def week_start(day: dt.date) -> dt.date:
@@ -88,3 +88,45 @@ def weekly_stats(db: Session, user_id: int, *, weeks: int, today: dt.date) -> li
             )
         )
     return result
+
+
+def epley_1rm(weight: float, reps: int) -> float:
+    """Estimated one-rep max. Only meaningful for 1-12 reps with real weight."""
+    return weight * (1 + reps / 30) if reps > 1 else weight
+
+
+def personal_records(db: Session, user_id: int) -> list[PersonalRecord]:
+    """Best set per exercise. Exercise names are matched case-insensitively."""
+    rows = db.execute(
+        select(Exercise.name, WorkoutSet.weight, WorkoutSet.reps, Workout.date, Workout.id)
+        .select_from(WorkoutSet)
+        .join(Exercise, WorkoutSet.exercise_id == Exercise.id)
+        .join(Workout, Exercise.workout_id == Workout.id)
+        .where(Workout.user_id == user_id)
+        .order_by(Workout.date)
+    ).all()
+
+    groups: dict[str, list] = defaultdict(list)
+    for row in rows:
+        groups[row.name.strip().lower()].append(row)
+
+    records = []
+    for sets in groups.values():
+        # Heaviest weight, then most reps; the earliest date it was reached (rows are date-ordered)
+        best = max(sets, key=lambda s: (s.weight, s.reps))
+        first_reached = next(s for s in sets if (s.weight, s.reps) == (best.weight, best.reps))
+        e1rm_candidates = [epley_1rm(s.weight, s.reps) for s in sets if s.weight > 0 and 1 <= s.reps <= 12]
+        records.append(
+            PersonalRecord(
+                exercise=sets[-1].name.strip(),  # the latest spelling
+                best_weight=best.weight,
+                best_weight_reps=best.reps,
+                best_weight_date=first_reached.date,
+                estimated_1rm=round(max(e1rm_candidates), 1) if e1rm_candidates else None,
+                max_reps=max(s.reps for s in sets),
+                times_trained=len({s.id for s in sets}),
+            )
+        )
+
+    records.sort(key=lambda r: (r.estimated_1rm is None, -(r.estimated_1rm or 0), r.exercise.lower()))
+    return records

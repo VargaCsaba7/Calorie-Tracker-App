@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, DbSession
 from app.models import RestDay, User, WeightEntry
-from app.schemas import RestDayRead, WeeklyStats, WeightEntryRead, WeightEntryWrite
-from app.services.stats import weekly_stats
+from app.schemas import PersonalRecord, RestDayRead, WeeklyStats, WeightEntryRead, WeightEntryWrite
+from app.services.stats import personal_records, weekly_stats
 
 router = APIRouter(tags=["progress"])
 
@@ -103,6 +103,12 @@ def delete_weight(day: dt.date, db: DbSession, user: CurrentUser) -> Response:
 
 
 # --- Weekly stats ---------------------------------------------------------------
+
+
+@router.get("/stats/records", response_model=list[PersonalRecord])
+def get_personal_records(db: DbSession, user: CurrentUser) -> list[PersonalRecord]:
+    """Best set per exercise, strongest (by estimated 1RM) first."""
+    return personal_records(db, user.id)
 
 
 @router.get("/stats/weekly", response_model=list[WeeklyStats])

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 
 if TYPE_CHECKING:
+    from app.models.food import Food
     from app.models.user import User
 
 
@@ -24,7 +25,13 @@ class Meal(Base):
     carbs: Mapped[float] = mapped_column(default=0)  # grams
     fat: Mapped[float] = mapped_column(default=0)  # grams
 
+    # Set when the meal was picked from the food database; the numbers above are
+    # copied at creation time, so later changes to the food don't rewrite history.
+    food_id: Mapped[int | None] = mapped_column(ForeignKey("foods.id", ondelete="SET NULL"))
+    grams: Mapped[float | None]
+
     user: Mapped["User"] = relationship(back_populates="meals")
+    food: Mapped["Food | None"] = relationship(lazy="joined")
 
     def __repr__(self) -> str:
         return f"<Meal id={self.id} name={self.name!r} kcal={self.calories}>"

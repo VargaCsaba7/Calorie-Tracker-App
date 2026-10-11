@@ -30,6 +30,7 @@
   --color-plate-blue: #2f6fdc;
   --color-plate-yellow: #e2a00c;
   --color-plate-green: #22955a;
+  --color-plate-white: #c9cfd6;
 
   /* Each macro is a plate color. Checked for color blindness; always shown with a label. */
   --color-protein: var(--color-plate-blue);
@@ -50,6 +51,8 @@
 @layer base {
   body {
     @apply bg-chalk font-sans text-brand-600 antialiased;
+    /* Faint grain, like chalk dust on a rubber gym floor */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.13 0 0 0 0 0.2 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   h1,

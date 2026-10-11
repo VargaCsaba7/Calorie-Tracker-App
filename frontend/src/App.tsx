@@ -5,6 +5,7 @@ import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
 import { NutritionPage } from './pages/NutritionPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { WorkoutsPage } from './pages/WorkoutsPage'
 
 // Temporary until the real pages are built
 function Placeholder({ title }: { title: string }) {
@@ -26,7 +27,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/" element={<Placeholder title="Dashboard" />} />
-              <Route path="/workouts" element={<Placeholder title="Workouts" />} />
+              <Route path="/workouts" element={<WorkoutsPage />} />
               <Route path="/nutrition" element={<NutritionPage />} />
             </Route>
           </Route>

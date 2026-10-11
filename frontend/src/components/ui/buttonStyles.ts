@@ -1,4 +1,4 @@
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'inverse'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'destructive' | 'inverse'
 export type ButtonSize = 'sm' | 'md'
 
 // Every variant has a visible surface, so all buttons read as buttons.
@@ -8,7 +8,11 @@ const variants: Record<ButtonVariant, string> = {
   secondary:
     'border border-brand-100 bg-white text-brand-600 shadow-[0_2px_0_var(--color-brand-100)] hover:border-brand-500/40 active:translate-y-px active:shadow-none',
   ghost: 'bg-black/5 text-brand-600 hover:bg-black/10',
+  // Outlined: opens a delete confirmation
   danger: 'border border-plate-red/25 bg-white text-plate-red hover:bg-plate-red hover:text-white',
+  // Solid: the final "yes, delete it" button
+  destructive:
+    'bg-plate-red text-white shadow-[0_2px_0_#9e1f29] hover:bg-[#b92833] active:translate-y-px active:shadow-none',
   // For dark surfaces (header, barbell panel)
   inverse: 'bg-white text-rubber hover:bg-chalk',
 }

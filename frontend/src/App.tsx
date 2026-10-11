@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthProvider'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { Layout } from './components/Layout'
+import { ConfirmProvider } from './confirm/ConfirmProvider'
 import { DashboardPage } from './pages/DashboardPage'
 import { LoginPage } from './pages/LoginPage'
 import { NutritionPage } from './pages/NutritionPage'
@@ -13,6 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ConfirmProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -28,6 +30,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </ConfirmProvider>
       </AuthProvider>
     </BrowserRouter>
   )

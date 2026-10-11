@@ -4,6 +4,7 @@ import { mealsApi } from '../api/meals'
 import type { Meal } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { DateSwitcher } from '../components/DateSwitcher'
+import { useConfirm } from '../confirm/useConfirm'
 import { BarbellMeter } from '../components/nutrition/BarbellMeter'
 import { MealForm } from '../components/nutrition/MealForm'
 import { MealList } from '../components/nutrition/MealList'
@@ -14,6 +15,7 @@ import { formatDate, today } from '../lib/date'
 
 export function NutritionPage() {
   const { user } = useAuth()
+  const confirm = useConfirm()
   const [date, setDate] = useState(today())
   const summary = useApi(() => mealsApi.summary(date), [date])
   const meals = useApi(() => mealsApi.list({ date_from: date, date_to: date }), [date])
@@ -25,7 +27,13 @@ export function NutritionPage() {
   }
 
   async function handleDelete(meal: Meal) {
-    if (!window.confirm(`Delete "${meal.name}"?`)) return
+    const confirmed = await confirm({
+      title: `Delete "${meal.name}"?`,
+      message: `${meal.calories} kcal will be removed from this day. This can't be undone.`,
+      confirmLabel: 'Delete meal',
+      tone: 'danger',
+    })
+    if (!confirmed) return
     setDeleteError(null)
     try {
       await mealsApi.remove(meal.id)

@@ -29,6 +29,11 @@ if not exist "backend\.env" (
     copy "backend\.env.example" "backend\.env" >nul
     backend\.venv\Scripts\python -c "import pathlib, secrets; p = pathlib.Path('backend/.env'); p.write_text(p.read_text().replace('SECRET_KEY=change-me', 'SECRET_KEY=' + secrets.token_urlsafe(48)))"
 )
+rem Pick up new dependencies and bring the database schema up to date
+backend\.venv\Scripts\python -m pip install -q -r backend\requirements.txt || goto :error
+pushd backend
+.venv\Scripts\alembic upgrade head || (popd & goto :error)
+popd
 
 rem ---- Frontend: install packages on first run ----
 rem PATH can be stale right after installing Node, so check the default location too

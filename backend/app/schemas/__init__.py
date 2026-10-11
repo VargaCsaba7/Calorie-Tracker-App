@@ -1,3 +1,4 @@
+from app.schemas.auth import Token
 from app.schemas.meal import MealCreate, MealRead, MealUpdate
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.schemas.workout import (
@@ -11,6 +12,7 @@ from app.schemas.workout import (
 )
 
 __all__ = [
+    "Token",
     "UserCreate",
     "UserRead",
     "UserUpdate",

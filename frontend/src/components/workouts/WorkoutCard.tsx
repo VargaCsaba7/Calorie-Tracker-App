@@ -1,6 +1,6 @@
 import type { Workout } from '../../api/types'
 import { formatDate } from '../../lib/date'
-import { countSets, formatWeight, workoutVolume } from '../../lib/workout'
+import { countSets, formatWeight, workoutColor, workoutVolume } from '../../lib/workout'
 import { Button } from '../ui/Button'
 
 interface WorkoutCardProps {
@@ -12,7 +12,10 @@ export function WorkoutCard({ workout, onDelete }: WorkoutCardProps) {
   const sets = countSets(workout)
 
   return (
-    <article className="rounded-xl border border-black/5 bg-chalk/50 p-4">
+    <article
+      className="rounded-xl border border-black/5 border-l-[6px] bg-chalk/50 p-4"
+      style={{ borderLeftColor: workoutColor(workout.name) }}
+    >
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs text-slate-500">

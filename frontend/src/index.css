@@ -1,22 +1,70 @@
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
 @import 'tailwindcss';
 
-/* Tailwind v4 is configured in CSS: these tokens become utilities like bg-brand-500. */
+/*
+  "Bumper plates" theme: colors come from the competition weight plate code
+  (red 25 kg, blue 20 kg, yellow 15 kg, green 10 kg), on chalk white and rubber floor grey.
+*/
 @theme {
-  --color-brand-50: oklch(0.97 0.02 152);
-  --color-brand-100: oklch(0.94 0.05 152);
-  --color-brand-500: oklch(0.65 0.17 152);
-  --color-brand-600: oklch(0.56 0.15 152);
-  --color-brand-700: oklch(0.47 0.12 152);
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  /* Condensed, like the numbers painted on plates and gym boards */
+  --font-display: 'Barlow Condensed', 'Barlow', ui-sans-serif, sans-serif;
 
-  /* Fixed colors per macro, reused everywhere. Checked to stay distinguishable
-     with color blindness; always shown next to a text label. */
-  --color-protein: #2a78d6;
-  --color-carbs: #eb6834;
-  --color-fat: #1baf7a;
+  --color-chalk: #eceef0;
+  --color-rubber: #23272e;
+  --color-rubber-light: #353b45;
+  --color-steel: #9aa3ad;
+
+  /* "brand" is the navy ink used for text, buttons and links */
+  --color-brand-50: #eef2f8;
+  --color-brand-100: #dbe3f0;
+  --color-brand-500: #3b5379;
+  --color-brand-600: #1c2a44;
+  --color-brand-700: #121d31;
+
+  --color-plate-red: #d8343f;
+  --color-plate-blue: #2f6fdc;
+  --color-plate-yellow: #e2a00c;
+  --color-plate-green: #22955a;
+
+  /* Each macro is a plate color. Checked for color blindness; always shown with a label. */
+  --color-protein: var(--color-plate-blue);
+  --color-carbs: var(--color-plate-yellow);
+  --color-fat: var(--color-plate-red);
+
+  /* Plates sliding onto the bar: the one load animation in the app */
+  --animate-plate-on: plate-on 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes plate-on {
+    from {
+      opacity: 0;
+      transform: translateX(48px);
+    }
+  }
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-chalk font-sans text-brand-600 antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-wide;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

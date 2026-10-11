@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router'
 import { useAuth } from '../auth/useAuth'
+import { Logo } from './Logo'
 import { Button } from './ui/Button'
 
 const links = [
@@ -13,9 +14,9 @@ export function Layout() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-black/5 bg-chalk/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <span className="font-bold text-brand-700">Calorie Tracker</span>
+          <Logo />
 
           {/* Full-width second row on phones, inline on larger screens */}
           <nav className="order-last flex w-full gap-1 sm:order-none sm:w-auto">
@@ -25,8 +26,8 @@ export function Layout() {
                 to={link.to}
                 end
                 className={({ isActive }) =>
-                  `flex-1 rounded-lg px-3 py-1.5 text-center text-sm font-medium sm:flex-none ${
-                    isActive ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100'
+                  `flex-1 rounded-full px-4 py-1.5 text-center font-display text-lg font-semibold tracking-wide sm:flex-none ${
+                    isActive ? 'bg-brand-600 text-white' : 'text-brand-500 hover:bg-black/5'
                   }`
                 }
               >
@@ -36,7 +37,7 @@ export function Layout() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2 text-sm">
-            <span className="hidden text-slate-500 sm:inline">{user?.username}</span>
+            <span className="hidden text-brand-500 sm:inline">{user?.username}</span>
             <Button variant="ghost" size="sm" onClick={logout}>
               Log out
             </Button>
@@ -44,7 +45,7 @@ export function Layout() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-6">
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
         <Outlet />
       </main>
     </div>

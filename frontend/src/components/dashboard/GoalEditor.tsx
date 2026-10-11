@@ -22,7 +22,7 @@ export function GoalEditor({ onSaved }: { onSaved: () => void }) {
         <span className="font-medium text-slate-700">{user.daily_calorie_goal.toLocaleString('en-GB')} kcal</span>{' '}
         <button
           type="button"
-          className="font-medium text-brand-700 hover:underline"
+          className="font-medium text-brand-600 underline decoration-brand-100 decoration-2 underline-offset-4 hover:decoration-brand-600"
           onClick={() => {
             setValue(String(user.daily_calorie_goal))
             setIsEditing(true)

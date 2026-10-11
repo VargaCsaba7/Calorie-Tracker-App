@@ -4,7 +4,7 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 
 ## Tech stack
 
-**Backend:** Python, FastAPI, SQLAlchemy, Pydantic, JWT auth, SQLite (PostgreSQL-ready)
+**Backend:** Python, FastAPI, SQLAlchemy, Pydantic, JWT auth, MySQL
 **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Router, Axios
 
 ## Features (planned)
@@ -15,6 +15,14 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 - Dashboard with progress stats
 
 ## Running the backend
+
+1. Start MySQL (e.g. from the XAMPP Control Panel) and create the database:
+
+```sql
+CREATE DATABASE calorie_tracker CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. Install dependencies and start the API (tables are created on startup):
 
 ```bash
 cd backend

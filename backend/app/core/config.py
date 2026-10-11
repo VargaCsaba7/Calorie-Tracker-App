@@ -9,7 +9,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     app_name: str = "Workout & Macro Tracker API"
-    database_url: str = "sqlite:///./tracker.db"
+    # XAMPP default: user "root" with an empty password
+    database_url: str = "mysql+pymysql://root:@localhost:3306/calorie_tracker?charset=utf8mb4"
 
     # JWT settings (used in Phase 2)
     secret_key: str = "change-me"

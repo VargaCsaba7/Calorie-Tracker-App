@@ -11,6 +11,8 @@ engine = create_engine(
     settings.database_url,
     # SQLite connections are thread-bound by default; FastAPI uses a threadpool.
     connect_args={"check_same_thread": False} if _is_sqlite else {},
+    # MySQL closes idle connections after wait_timeout; test them before use.
+    pool_pre_ping=not _is_sqlite,
 )
 
 if _is_sqlite:

@@ -124,13 +124,21 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
       </datalist>
 
       {exercises.map((exercise, exerciseIndex) => (
-        <fieldset key={exercise.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+        <fieldset key={exercise.id} className="rounded-xl border border-black/5 bg-chalk/70 p-3">
           <legend className="sr-only">Exercise {exerciseIndex + 1}</legend>
           <div className="flex items-end gap-2">
+            {/* Exercises are done in order, so they are numbered */}
+            <span
+              aria-hidden="true"
+              className="mb-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-rubber font-display text-lg font-bold text-white"
+            >
+              {exerciseIndex + 1}
+            </span>
             <Field
               className="flex-1"
               label={`Exercise ${exerciseIndex + 1}`}
-              placeholder="e.g. Bench press"
+              hideLabel
+              placeholder="Exercise, e.g. Bench press"
               list="exercise-suggestions"
               required
               maxLength={100}
@@ -141,7 +149,7 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
               <Button
                 variant="danger"
                 size="sm"
-                className="mb-1.5"
+                className="mb-1"
                 onClick={() => setExercises((prev) => prev.filter((ex) => ex.id !== exercise.id))}
               >
                 Remove
@@ -150,9 +158,14 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
           </div>
 
           <div className="mt-3 space-y-2">
+            <div aria-hidden="true" className="grid grid-cols-[3rem_1fr_1fr_2rem] gap-2 text-xs font-medium text-slate-500">
+              <span>Set</span>
+              <span>Weight (kg)</span>
+              <span>Reps</span>
+            </div>
             {exercise.sets.map((set, setIndex) => (
               <div key={set.id} className="grid grid-cols-[3rem_1fr_1fr_2rem] items-center gap-2">
-                <span className="text-xs font-medium text-slate-500">Set {setIndex + 1}</span>
+                <span className="font-display text-lg font-semibold text-brand-500">{setIndex + 1}</span>
                 <Field
                   label={`Set ${setIndex + 1} weight (kg)`}
                   hideLabel
@@ -161,7 +174,7 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
                   min={0}
                   max={1000}
                   step="any"
-                  placeholder="kg"
+                  placeholder="0"
                   value={set.weight}
                   onChange={(e) => updateSet(exercise.id, set.id, { weight: e.target.value })}
                 />
@@ -172,7 +185,7 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
                   inputMode="numeric"
                   min={1}
                   max={1000}
-                  placeholder="reps"
+                  placeholder="0"
                   required
                   value={set.reps}
                   onChange={(e) => updateSet(exercise.id, set.id, { reps: e.target.value })}
@@ -181,7 +194,7 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
                   <button
                     type="button"
                     aria-label={`Remove set ${setIndex + 1}`}
-                    className="rounded-md p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                    className="flex size-8 items-center justify-center rounded-lg border border-brand-100 bg-white text-lg text-slate-500 hover:border-plate-red/40 hover:text-plate-red"
                     onClick={() =>
                       updateExercise(exercise.id, (ex) => ({
                         ...ex,
@@ -199,9 +212,9 @@ export function WorkoutForm({ onSaved }: { onSaved: () => void }) {
           </div>
 
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
-            className="mt-2"
+            className="mt-3"
             onClick={() => updateExercise(exercise.id, (ex) => ({ ...ex, sets: [...ex.sets, newSet(ex.sets.at(-1))] }))}
           >
             + Add set

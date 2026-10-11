@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { getErrorMessage } from '../api/errors'
 import { mealsApi } from '../api/meals'
 import type { Meal } from '../api/types'
+import { useAuth } from '../auth/useAuth'
 import { DateSwitcher } from '../components/DateSwitcher'
-import { CalorieProgress } from '../components/nutrition/CalorieProgress'
-import { MacroBreakdown } from '../components/nutrition/MacroBreakdown'
+import { BarbellMeter } from '../components/nutrition/BarbellMeter'
 import { MealForm } from '../components/nutrition/MealForm'
 import { MealList } from '../components/nutrition/MealList'
 import { Alert } from '../components/ui/Alert'
@@ -13,6 +13,7 @@ import { useApi } from '../hooks/useApi'
 import { formatDate, today } from '../lib/date'
 
 export function NutritionPage() {
+  const { user } = useAuth()
   const [date, setDate] = useState(today())
   const summary = useApi(() => mealsApi.summary(date), [date])
   const meals = useApi(() => mealsApi.list({ date_from: date, date_to: date }), [date])
@@ -40,25 +41,25 @@ export function NutritionPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">Nutrition</h1>
+        <h1 className="text-4xl font-bold">Nutrition</h1>
         <DateSwitcher value={date} onChange={setDate} />
       </div>
 
+      <Alert message={summary.error} />
+      {summary.data && (
+        <BarbellMeter
+          title={dayTitle}
+          macroGoals={user ? { protein: user.protein_goal, carbs: user.carbs_goal, fat: user.fat_goal } : undefined}
+          calories={summary.data.calories}
+          goal={summary.data.calorie_goal}
+          protein={summary.data.protein}
+          carbs={summary.data.carbs}
+          fat={summary.data.fat}
+        />
+      )}
+
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 space-y-6">
-          <Card title={dayTitle}>
-            <Alert message={summary.error} />
-            {summary.data && (
-              <div className="space-y-6">
-                <CalorieProgress consumed={summary.data.calories} goal={summary.data.calorie_goal} />
-                <MacroBreakdown
-                  protein={summary.data.protein}
-                  carbs={summary.data.carbs}
-                  fat={summary.data.fat}
-                />
-              </div>
-            )}
-          </Card>
 
           <Card title="Meals">
             <div className="space-y-3">

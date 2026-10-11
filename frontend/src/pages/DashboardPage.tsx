@@ -1,14 +1,13 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router'
 import { mealsApi } from '../api/meals'
 import { workoutsApi } from '../api/workouts'
 import { useAuth } from '../auth/useAuth'
+import { BodyPanel } from '../components/dashboard/BodyPanel'
 import { CaloriesChart } from '../components/dashboard/CaloriesChart'
-import { GoalEditor } from '../components/dashboard/GoalEditor'
-import { StatTile } from '../components/dashboard/StatTile'
+import { ButtonLink } from '../components/ui/Button'
+import { StatRow, StatTile } from '../components/dashboard/StatTile'
 import { VolumeChart } from '../components/dashboard/VolumeChart'
-import { CalorieProgress } from '../components/nutrition/CalorieProgress'
-import { MacroBreakdown } from '../components/nutrition/MacroBreakdown'
+import { BarbellMeter } from '../components/nutrition/BarbellMeter'
 import { Alert } from '../components/ui/Alert'
 import { Card } from '../components/ui/Card'
 import { useApi } from '../hooks/useApi'
@@ -61,77 +60,84 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Hi, {user?.username}</h1>
-        <p className="text-sm text-slate-500">
-          {formatDate(todayIso, { weekday: 'long', month: 'long', day: 'numeric' })}
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        <div>
+          <p className="text-brand-500">
+            {formatDate(todayIso, { weekday: 'long', month: 'long', day: 'numeric' })}
+          </p>
+          <h1 className="text-4xl font-bold">Hi, {user?.username}</h1>
+        </div>
       </div>
 
       <Alert message={summary.error ?? weekMeals.error ?? workouts.error} />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile
-          label="Calories today"
-          value={(summary.data?.calories ?? 0).toLocaleString('en-GB')}
-          hint={`of ${goal.toLocaleString('en-GB')} kcal`}
+      {summary.data && user && (
+        <BarbellMeter
+          title="Eaten today"
+          calories={summary.data.calories}
+          goal={summary.data.calorie_goal}
+          protein={summary.data.protein}
+          carbs={summary.data.carbs}
+          fat={summary.data.fat}
+          macroGoals={{ protein: user.protein_goal, carbs: user.carbs_goal, fat: user.fat_goal }}
+          action={
+            <ButtonLink to="/nutrition" variant="inverse">
+              Log a meal
+            </ButtonLink>
+          }
         />
-        <StatTile
-          label="Protein today"
-          value={`${formatGrams(summary.data?.protein ?? 0)} g`}
-          hint={`${summary.data?.meal_count ?? 0} ${summary.data?.meal_count === 1 ? 'meal' : 'meals'} logged`}
-        />
+      )}
+
+      {user && <BodyPanel user={user} />}
+
+      <StatRow>
         <StatTile
           label="Workouts this week"
           value={String(workoutsThisWeek.length)}
-          hint={`${formatWeight(volumeThisWeek)} kg volume`}
+          hint="Last 7 days"
         />
         <StatTile
-          label="7-day average"
-          value={`${averageCalories.toLocaleString('en-GB')}`}
-          hint={`kcal · ${loggedDays.length} of 7 days logged`}
+          label="Volume this week"
+          value={formatWeight(volumeThisWeek)}
+          unit="kg"
+          hint="Weight × reps, all sets"
         />
-      </div>
+        <StatTile
+          label="Average intake"
+          value={averageCalories.toLocaleString('en-GB')}
+          unit="kcal"
+          hint={`On the ${loggedDays.length} ${loggedDays.length === 1 ? 'day' : 'days'} you logged`}
+        />
+        <StatTile
+          label="Protein today"
+          value={formatGrams(summary.data?.protein ?? 0)}
+          unit="g"
+          hint={`From ${summary.data?.meal_count ?? 0} ${summary.data?.meal_count === 1 ? 'meal' : 'meals'}`}
+        />
+      </StatRow>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card
-          title="Today"
-          action={
-            <Link to="/nutrition" className="text-sm font-medium text-brand-700 hover:underline">
-              Log a meal
-            </Link>
-          }
-        >
-          {summary.data && (
-            <div className="space-y-6">
-              <CalorieProgress consumed={summary.data.calories} goal={summary.data.calorie_goal} />
-              <MacroBreakdown protein={summary.data.protein} carbs={summary.data.carbs} fat={summary.data.fat} />
-              <GoalEditor onSaved={() => void summary.reload()} />
-            </div>
-          )}
-        </Card>
-
         <Card title="Calories, last 7 days">
           <CaloriesChart data={caloriesByDay} goal={goal} />
         </Card>
-      </div>
 
-      <Card
-        title="Training volume per workout"
-        action={
-          <Link to="/workouts" className="text-sm font-medium text-brand-700 hover:underline">
-            Log a workout
-          </Link>
-        }
-      >
-        {volumeSeries.length > 0 ? (
-          <VolumeChart data={volumeSeries} />
-        ) : (
-          <p className="py-10 text-center text-sm text-slate-500">
-            No workouts yet. Your progress will show up here.
-          </p>
-        )}
-      </Card>
+        <Card
+          title="Volume per workout"
+          action={
+            <ButtonLink to="/workouts" variant="secondary" size="sm">
+              Log a workout
+            </ButtonLink>
+          }
+        >
+          {volumeSeries.length > 0 ? (
+            <VolumeChart data={volumeSeries} />
+          ) : (
+            <p className="py-10 text-center text-sm text-slate-500">
+              Log a workout and its volume will show up here.
+            </p>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }

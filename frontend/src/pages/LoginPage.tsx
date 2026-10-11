@@ -65,7 +65,7 @@ export function LoginPage() {
       </form>
       <p className="mt-6 text-center text-sm text-slate-500">
         No account yet?{' '}
-        <Link to="/register" className="font-medium text-brand-700 hover:underline">
+        <Link to="/register" className="font-medium text-brand-600 underline decoration-brand-100 decoration-2 underline-offset-4 hover:decoration-brand-600">
           Sign up
         </Link>
       </p>

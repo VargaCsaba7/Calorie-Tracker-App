@@ -1,11 +1,34 @@
 // Mirrors the backend's Pydantic schemas. Dates are ISO strings ("2026-10-11").
 
-export interface User {
+export type Sex = 'male' | 'female'
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active'
+
+/** Goals and body data; every field is optional (null = not set). */
+export interface UserProfile {
+  protein_goal: number | null
+  carbs_goal: number | null
+  fat_goal: number | null
+  sex: Sex | null
+  birth_date: string | null
+  height_cm: number | null
+  weight_kg: number | null
+  activity_level: ActivityLevel | null
+}
+
+/** Calculated by the backend once the body profile is complete. */
+export interface EnergyEstimate {
+  age: number
+  bmr: number
+  maintenance_calories: number
+}
+
+export interface User extends UserProfile {
   id: number
   username: string
   email: string
   daily_calorie_goal: number
   created_at: string
+  energy: EnergyEstimate | null
 }
 
 export interface RegisterPayload {
@@ -15,7 +38,8 @@ export interface RegisterPayload {
   daily_calorie_goal?: number
 }
 
-export interface UserUpdate {
+/** Only the fields sent are changed; null clears a profile field. */
+export interface UserUpdate extends Partial<UserProfile> {
   email?: string
   daily_calorie_goal?: number
 }

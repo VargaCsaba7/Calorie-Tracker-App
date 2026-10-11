@@ -90,7 +90,7 @@ export function MealForm({ date, onSaved }: MealFormProps) {
           Macros add up to about {estimatedKcal} kcal.{' '}
           <button
             type="button"
-            className="font-medium text-brand-700 hover:underline"
+            className="font-medium text-brand-600 underline decoration-brand-100 decoration-2 underline-offset-4 hover:decoration-brand-600"
             onClick={() => update('calories', String(estimatedKcal))}
           >
             Use this

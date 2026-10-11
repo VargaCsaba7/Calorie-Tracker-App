@@ -5,6 +5,7 @@ import { workoutsApi } from '../api/workouts'
 import { Alert } from '../components/ui/Alert'
 import { Card } from '../components/ui/Card'
 import { WorkoutCard } from '../components/workouts/WorkoutCard'
+import { WeekStrip } from '../components/workouts/WeekStrip'
 import { WorkoutForm } from '../components/workouts/WorkoutForm'
 import { useApi } from '../hooks/useApi'
 
@@ -25,7 +26,9 @@ export function WorkoutsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Workouts</h1>
+      <h1 className="text-4xl font-bold">Workouts</h1>
+
+      {workouts.data && <WeekStrip workouts={workouts.data} />}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
         <Card title="Log a workout" className="lg:self-start">

@@ -72,5 +72,4 @@ class UserRead(UserBase, UserProfile):
             height_cm=self.height_cm,
             weight_kg=self.weight_kg,
             activity_level=self.activity_level,
-            calorie_goal=self.daily_calorie_goal,
         )

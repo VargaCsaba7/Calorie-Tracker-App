@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+/* Tailwind v4 is configured in CSS: these tokens become utilities like bg-brand-500. */
+@theme {
+  --color-brand-50: oklch(0.97 0.02 152);
+  --color-brand-100: oklch(0.94 0.05 152);
+  --color-brand-500: oklch(0.65 0.17 152);
+  --color-brand-600: oklch(0.56 0.15 152);
+  --color-brand-700: oklch(0.47 0.12 152);
+
+  /* Fixed colors per macro, reused in every chart and progress bar */
+  --color-protein: oklch(0.62 0.19 255);
+  --color-carbs: oklch(0.75 0.16 75);
+  --color-fat: oklch(0.65 0.2 25);
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}

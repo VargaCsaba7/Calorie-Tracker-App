@@ -36,6 +36,18 @@ API docs are available at http://localhost:8000/docs.
 
 Copy `backend/.env.example` to `backend/.env` and set a real `SECRET_KEY`.
 
+## Running the frontend
+
+With the backend running:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. The dev server proxies `/api` requests to the backend on port 8000.
+
 ## API
 
 | Method | Endpoint | Description |

@@ -96,10 +96,71 @@ export interface Meal {
   protein: number
   carbs: number
   fat: number
+  /** Set when the meal was picked from the food database */
+  grams: number | null
+  food: { id: number; image_url: string | null; emoji: string | null; brand: string | null } | null
 }
 
-export type MealInput = Omit<Meal, 'id'>
-export type MealUpdate = Partial<MealInput>
+/** Entered by hand */
+export interface MealInput {
+  name: string
+  date: string
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+}
+
+/** Picked from the food database: the server calculates the numbers */
+export interface MealFromFoodInput {
+  date: string
+  food_id: number
+  grams: number
+}
+
+export type MealUpdate = Partial<MealInput> & { grams?: number }
+
+// --- Foods ---
+
+export interface Food {
+  id: number
+  name: string
+  brand: string | null
+  source: 'builtin' | 'off'
+  image_url: string | null
+  emoji: string | null
+  kcal_100g: number
+  protein_100g: number
+  carbs_100g: number
+  fat_100g: number
+  serving_g: number | null
+}
+
+export interface FoodSearchResult {
+  foods: Food[]
+  online_search_ok: boolean
+}
+
+/** The AI's estimate for the whole described portion */
+export interface FoodEstimate {
+  name: string
+  portion_grams: number
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  note: string
+}
+
+export interface PersonalRecord {
+  exercise: string
+  best_weight: number
+  best_weight_reps: number
+  best_weight_date: string
+  estimated_1rm: number | null
+  max_reps: number
+  times_trained: number
+}
 
 export interface DailyNutritionSummary {
   date: string

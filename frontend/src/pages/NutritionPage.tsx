@@ -6,7 +6,7 @@ import { useAuth } from '../auth/useAuth'
 import { DateSwitcher } from '../components/DateSwitcher'
 import { useConfirm } from '../confirm/useConfirm'
 import { BarbellMeter } from '../components/nutrition/BarbellMeter'
-import { MealForm } from '../components/nutrition/MealForm'
+import { AddMealPanel } from '../components/nutrition/AddMealPanel'
 import { MealList } from '../components/nutrition/MealList'
 import { Alert } from '../components/ui/Alert'
 import { Card } from '../components/ui/Card'
@@ -66,9 +66,8 @@ export function NutritionPage() {
         />
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
         <div className="min-w-0 space-y-6">
-
           <Card title="Meals">
             <div className="space-y-3">
               <Alert message={meals.error ?? deleteError} />
@@ -82,7 +81,7 @@ export function NutritionPage() {
         </div>
 
         <Card title="Add a meal" className="lg:self-start">
-          <MealForm date={date} onSaved={refresh} />
+          <AddMealPanel date={date} onSaved={refresh} />
         </Card>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import type { Meal } from '../../api/types'
 import { formatGrams, MACROS } from '../../lib/macros'
 import { Button } from '../ui/Button'
+import { FoodImage } from './FoodImage'
 
 interface MealListProps {
   meals: Meal[]
@@ -16,8 +17,12 @@ export function MealList({ meals, onDelete }: MealListProps) {
     <ul className="-my-3 divide-y divide-black/5">
       {meals.map((meal) => (
         <li key={meal.id} className="flex items-center gap-3 py-3">
+          <FoodImage imageUrl={meal.food?.image_url} emoji={meal.food?.emoji ?? '🍽️'} name={meal.name} />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-medium">{meal.name}</p>
+            <p className="truncate font-medium">
+              {meal.name}
+              {meal.grams !== null && <span className="ml-1.5 text-sm font-normal text-slate-500">{formatGrams(meal.grams)} g</span>}
+            </p>
             <p className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-slate-500 tabular-nums">
               {MACROS.map((macro) => (
                 <span key={macro.key} className="inline-flex items-center gap-1">

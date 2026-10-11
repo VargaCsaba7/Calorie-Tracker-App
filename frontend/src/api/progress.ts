@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { ListParams, RestDay, WeeklyStats, WeightEntry } from './types'
+import type { ListParams, PersonalRecord, RestDay, WeeklyStats, WeightEntry } from './types'
 
 export const progressApi = {
   async restDays(params?: Pick<ListParams, 'date_from' | 'date_to'>) {
@@ -28,6 +28,12 @@ export const progressApi = {
 
   async deleteWeight(date: string) {
     await api.delete(`/weights/${date}`)
+  },
+
+  /** Best set per exercise, strongest first */
+  async records() {
+    const { data } = await api.get<PersonalRecord[]>('/stats/records')
+    return data
   },
 
   async weeklyStats(weeks = 12) {

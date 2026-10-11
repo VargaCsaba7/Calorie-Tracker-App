@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { DailyNutritionSummary, ListParams, Meal, MealInput, MealUpdate } from './types'
+import type { DailyNutritionSummary, ListParams, Meal, MealFromFoodInput, MealInput, MealUpdate } from './types'
 
 export const mealsApi = {
   async list(params?: ListParams) {
@@ -15,7 +15,7 @@ export const mealsApi = {
     return data
   },
 
-  async create(payload: MealInput) {
+  async create(payload: MealInput | MealFromFoodInput) {
     const { data } = await api.post<Meal>('/meals', payload)
     return data
   },

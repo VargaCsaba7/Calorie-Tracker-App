@@ -6,15 +6,19 @@ import { Alert } from '../ui/Alert'
 import { Button } from '../ui/Button'
 import { Field } from '../ui/Field'
 
-const emptyForm = { name: '', calories: '', protein: '', carbs: '', fat: '' }
+export type MealFormValues = { name: string; calories: string; protein: string; carbs: string; fat: string }
+
+const emptyForm: MealFormValues = { name: '', calories: '', protein: '', carbs: '', fat: '' }
 
 interface MealFormProps {
   date: string
   onSaved: () => void
+  /** Pre-filled values, e.g. from an AI estimate the user should review */
+  initialValues?: MealFormValues
 }
 
-export function MealForm({ date, onSaved }: MealFormProps) {
-  const [form, setForm] = useState(emptyForm)
+export function MealForm({ date, onSaved, initialValues }: MealFormProps) {
+  const [form, setForm] = useState(initialValues ?? emptyForm)
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -25,7 +29,7 @@ export function MealForm({ date, onSaved }: MealFormProps) {
   }
   const estimatedKcal = caloriesFromMacros(macros)
 
-  function update(field: keyof typeof emptyForm, value: string) {
+  function update(field: keyof MealFormValues, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 

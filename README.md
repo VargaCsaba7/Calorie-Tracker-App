@@ -15,6 +15,12 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 - **Dashboard:** today's calories and macros, calories of the last 7 days vs. goal, training volume per workout
 - Responsive, works on phones too
 
+## Quick start (Windows)
+
+Double-click `start.bat`. It starts MySQL from XAMPP if needed, creates the database, sets up the
+Python venv and npm packages on the first run, then starts the backend and frontend and opens
+http://localhost:5173. Close the two server windows to stop the app.
+
 ## Running the backend
 
 1. Start MySQL (e.g. from the XAMPP Control Panel) and create the database:

@@ -8,10 +8,11 @@
   --color-brand-600: oklch(0.56 0.15 152);
   --color-brand-700: oklch(0.47 0.12 152);
 
-  /* Fixed colors per macro, reused in every chart and progress bar */
-  --color-protein: oklch(0.62 0.19 255);
-  --color-carbs: oklch(0.75 0.16 75);
-  --color-fat: oklch(0.65 0.2 25);
+  /* Fixed colors per macro, reused everywhere. Checked to stay distinguishable
+     with color blindness; always shown next to a text label. */
+  --color-protein: #2a78d6;
+  --color-carbs: #eb6834;
+  --color-fat: #1baf7a;
 }
 
 @layer base {

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import auth, foods, gyms, meals, progress, users, workouts
+from app.api.routes import auth, exercise_library, foods, gyms, meals, progress, users, workouts
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(auth.router)
@@ -10,3 +10,4 @@ api_router.include_router(meals.router)
 api_router.include_router(foods.router)
 api_router.include_router(progress.router)
 api_router.include_router(gyms.router)
+api_router.include_router(exercise_library.router)

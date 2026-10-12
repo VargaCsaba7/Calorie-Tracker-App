@@ -12,6 +12,7 @@ A full-stack web app for logging workouts and tracking daily calorie and macronu
 - Sign up / log in with JWT, stays logged in after reload
 - **Workout logger:** log a workout with any number of exercises and sets (weight × reps), see your history with total volume
 - **Nutrition tracker:** search ~75 common foods (Hungarian names) and packaged products from [Open Food Facts](https://world.openfoodfacts.org) with photos, enter the grams and the server calculates calories and macros; or describe a meal and let an AI (Claude API) estimate it; or type the numbers by hand
+- **Exercise library:** 876 exercises (public domain [free-exercise-db](https://github.com/yuhonas/free-exercise-db)) as cards filtered by muscle group, each with start/end photos, a body map of the trained muscles, step-by-step instructions and a YouTube link; while logging a workout, "How to do it" opens the typed exercise (Hungarian names work too) and "Choose from library" picks one
 - **Gyms nearby:** a map (Leaflet + OpenStreetMap) of the gyms around your location or any area you pick, with addresses, opening hours and directions; gym data comes from OpenStreetMap through the Overpass API
 - **Personal records:** best set and estimated one-rep max (Epley) for every exercise
 - **Profile:** height, weight, age and activity level give your daily calorie needs (Mifflin-St Jeor formula); set a calorie goal and optional protein/carbs/fat targets

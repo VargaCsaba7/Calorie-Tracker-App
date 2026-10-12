@@ -232,3 +232,38 @@ export interface GymSearchResult {
   gyms: Gym[]
   radius_m: number
 }
+
+// --- Exercise library ---
+
+export type MuscleGroup =
+  | 'chest'
+  | 'back'
+  | 'shoulders'
+  | 'biceps'
+  | 'triceps'
+  | 'forearms'
+  | 'abs'
+  | 'quads'
+  | 'hamstrings'
+  | 'glutes'
+  | 'calves'
+
+export interface ExerciseInfo {
+  id: string
+  name: string
+  muscle_group: MuscleGroup
+  category: string
+  level: string
+  equipment: string | null
+  force: string | null
+  mechanic: string | null
+  primary_muscles: string[]
+  secondary_muscles: string[]
+  instructions: string[]
+  image_urls: string[]
+}
+
+export interface ExerciseInfoList {
+  items: ExerciseInfo[]
+  total: number
+}

@@ -71,3 +71,19 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Gym markers on the map: a weight plate seen from the front */
+.gym-pin {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #ffffff 0 18%, var(--color-plate-red) 19% 100%);
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 2px 6px rgb(0 0 0 / 0.35);
+}
+
+.gym-pin.is-selected {
+  background: radial-gradient(circle, #ffffff 0 18%, var(--color-rubber) 19% 100%);
+}

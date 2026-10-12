@@ -6,6 +6,7 @@ import { Button } from './ui/Button'
 const links = [
   { to: '/', label: 'Dashboard' },
   { to: '/workouts', label: 'Workouts' },
+  { to: '/exercises', label: 'Exercises' },
   { to: '/nutrition', label: 'Nutrition' },
   { to: '/gyms', label: 'Gyms' },
   { to: '/profile', label: 'Profile' },

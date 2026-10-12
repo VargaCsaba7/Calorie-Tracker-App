@@ -212,3 +212,23 @@ export interface ListParams {
   skip?: number
   limit?: number
 }
+
+// --- Gyms ---
+
+export interface Gym {
+  /** OpenStreetMap id, e.g. "node/123" */
+  id: string
+  name: string
+  lat: number
+  lon: number
+  distance_m: number
+  address: string | null
+  opening_hours: string | null
+  website: string | null
+  phone: string | null
+}
+
+export interface GymSearchResult {
+  gyms: Gym[]
+  radius_m: number
+}

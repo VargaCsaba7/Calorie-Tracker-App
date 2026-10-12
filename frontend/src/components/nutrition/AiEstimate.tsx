@@ -72,17 +72,33 @@ export function AiEstimate({ enabled, onReview }: AiEstimateProps) {
 
       {estimate && (
         <div className="rounded-xl border border-black/5 bg-chalk p-4">
-          <p className="font-display text-xl font-semibold">{estimate.name}</p>
-          <p className="text-sm text-slate-500">About {Math.round(estimate.portion_grams)} g</p>
-          <p className="mt-2 font-display leading-none">
+          <p className="font-display leading-none">
             <span className="text-3xl font-bold tabular-nums">{estimate.calories}</span>
             <span className="ml-1 text-slate-500">kcal</span>
+            <span className="ml-2 font-sans text-sm text-slate-500">about {Math.round(estimate.portion_grams)} g</span>
           </p>
           <p className="mt-1 text-sm tabular-nums">
             {formatGrams(estimate.protein)} g protein, {formatGrams(estimate.carbs)} g carbs, {formatGrams(estimate.fat)} g fat
           </p>
-          <p className="mt-2 text-sm text-brand-500">{estimate.note}</p>
-          <p className="mt-2 text-xs text-slate-500">This is an AI estimate. Check the numbers before saving.</p>
+
+          <ul className="mt-3 divide-y divide-black/5 rounded-lg bg-white px-3">
+            {estimate.items.map((item, i) => (
+              <li key={`${item.name}-${i}`} className="flex items-baseline justify-between gap-3 py-2 text-sm">
+                <span className="min-w-0">
+                  <span className="font-medium">{item.name}</span>
+                  <span className="ml-1.5 text-slate-500">{formatGrams(item.grams)} g</span>
+                  <span className={`block text-xs ${item.database_food ? 'text-plate-green' : 'text-slate-500'}`}>
+                    {item.database_food ? `From the food database: ${item.database_food}` : 'AI estimate'}
+                  </span>
+                </span>
+                <span className="font-display text-base font-semibold whitespace-nowrap tabular-nums">{item.calories} kcal</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-2 text-xs text-slate-500">
+            The AI read the foods and amounts from your description. Check them before saving.
+          </p>
           <Button
             className="mt-3 w-full"
             onClick={() =>

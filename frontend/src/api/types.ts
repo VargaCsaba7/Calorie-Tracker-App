@@ -141,7 +141,18 @@ export interface FoodSearchResult {
   online_search_ok: boolean
 }
 
-/** The AI's estimate for the whole described portion */
+export interface EstimateItem {
+  name: string
+  grams: number
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  /** Set when the numbers come from the app's food database instead of the AI */
+  database_food: string | null
+}
+
+/** The AI's estimate for the whole described meal: its foods plus their totals */
 export interface FoodEstimate {
   name: string
   portion_grams: number
@@ -149,7 +160,7 @@ export interface FoodEstimate {
   protein: number
   carbs: number
   fat: number
-  note: string
+  items: EstimateItem[]
 }
 
 export interface PersonalRecord {

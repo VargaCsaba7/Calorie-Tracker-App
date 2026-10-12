@@ -33,10 +33,10 @@ def ai_status(_user: CurrentUser) -> AiStatus:
 
 
 @router.post("/estimate", response_model=FoodEstimate)
-def estimate(payload: FoodEstimateRequest, _user: CurrentUser) -> FoodEstimate:
+def estimate(payload: FoodEstimateRequest, db: DbSession, _user: CurrentUser) -> FoodEstimate:
     """Estimates calories and macros for a described meal. Nothing is saved."""
     try:
-        return estimate_food(payload.description)
+        return estimate_food(db, payload.description)
     except AiNotConfiguredError as exc:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, f"AI estimates are not available: {exc}") from None
     except AiEstimateError as exc:

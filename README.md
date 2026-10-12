@@ -75,9 +75,11 @@ All endpoints except register and login need an `Authorization: Bearer <token>` 
 
 ## AI meal estimate (optional)
 
-On the Nutrition page, "Describe (AI)" sends a short description ("egy tányér gulyásleves két szelet kenyérrel")
-to a language model, which answers in a fixed JSON schema (structured outputs) with the portion size, calories and
-macros. The estimate only pre-fills the manual form, so the user checks it before saving.
+On the Nutrition page, "Describe (AI)" takes a short description ("egy tányér gulyásleves két szelet kenyérrel
+és egy kóla"). A language model splits it into foods with amounts, answering in a fixed JSON schema (structured
+outputs). Foods found in the app's food database get their numbers from there, which is far more reliable than a
+small model's memory; only unknown foods use the model's own values. The backend adds up the totals, and the result
+only pre-fills the meal form, so the user checks it before saving.
 
 **Default: free and local with [Ollama](https://ollama.com).** No account or API key, nothing leaves your machine.
 

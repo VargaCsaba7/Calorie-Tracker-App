@@ -4,9 +4,11 @@ Two providers, picked with AI_PROVIDER in .env:
 - "ollama":    a free open model running locally with Ollama (default, no API key)
 - "anthropic": Claude through the Anthropic API (needs ANTHROPIC_API_KEY)
 
-Both answer in the same fixed JSON schema (structured outputs), parsed into the
-FoodEstimate Pydantic model. The estimate only pre-fills the meal form; the user
-reviews it before saving.
+The model's main job is reading the description: it splits the meal into foods with
+amounts, in a fixed JSON schema (structured outputs). Foods that match one of the app's
+built-in foods get their numbers from the database, which is more reliable than a small
+model's memory; only unknown foods use the model's per-100 g values. The backend adds
+up the totals, and the result only pre-fills the meal form for the user to review.
 """
 
 import time
@@ -15,18 +17,27 @@ from functools import lru_cache
 import anthropic
 import httpx
 from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.schemas.food import FoodEstimate
+from app.schemas.food import EstimateItem, FoodEstimate, ModelEstimate, ModelItem
+from app.services.food_match import match_builtin_food
 
-SYSTEM_PROMPT = """You estimate the nutrition of meals for a calorie tracking app.
-The user describes what they ate, often in Hungarian.
+SYSTEM_PROMPT = """Split the meal the user describes (usually Hungarian) into separate foods.
 
-- Estimate the whole portion they describe. If no amount is given, assume one typical adult portion.
-- Base the numbers on standard food composition data for typical recipes.
-- Keep calories consistent with the macros (4 kcal per gram of protein and carbohydrate, 9 per gram of fat).
-- Write the name and the note in the same language as the user's description.
-- Answer only with the JSON object."""
+- Return every food once, as its own item with its total weight in grams. Never skip foods:
+  side dishes, bread, drinks, toppings and fats all count.
+- Words like tányér, szelet, pohár, bögre, darab, adag, doboz are amounts, not foods.
+- Use the user's amounts; otherwise typical adult portions. Convert counts to grams
+  (1 egg = 55 g, 1 slice of bread = 40 g, 1 banana = 120 g, 1 glass of milk = 250 g,
+  1 can of cola = 330 g, 1 slice of pizza = 120 g, a plate of soup = 400 g,
+  a portion of chips = 150 g, butter for frying = 10 g).
+- Name each food in its simple Hungarian dictionary form.
+- Also give each food's typical nutrition per 100 g.
+
+Examples:
+"csirkemell rizzsel" -> csirkemell 150 g, rizs 150 g
+"2 tojás, egy szelet kenyér és egy kávé tejjel" -> tojás 110 g, kenyér 40 g, kávé 200 g, tej 50 g"""
 
 # Claude models that accept the server-side refusal fallback ("default" routing)
 _FALLBACK_MODELS = {"claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"}
@@ -46,16 +57,43 @@ def ai_enabled() -> bool:
     return _ollama_ready()
 
 
-def estimate_food(description: str) -> FoodEstimate:
+def estimate_food(db: Session, description: str) -> FoodEstimate:
     if settings.ai_provider == "anthropic":
-        estimate = _estimate_with_claude(description)
+        raw = _estimate_with_claude(description)
     else:
-        estimate = _estimate_with_ollama(description)
+        raw = _estimate_with_ollama(description)
 
-    numbers = (estimate.portion_grams, estimate.calories, estimate.protein, estimate.carbs, estimate.fat)
-    if any(n < 0 for n in numbers) or estimate.calories > 10_000:
+    items = [_resolve_item(db, item) for item in raw.items if item.grams > 0 and item.food.strip()]
+    if not items:
+        raise AiEstimateError("The AI couldn't recognize any food in the description")
+
+    estimate = FoodEstimate.from_items(description[:100], items)
+    if estimate.calories > 10_000:
         raise AiEstimateError("The AI returned values outside the allowed range")
     return estimate
+
+
+def _resolve_item(db: Session, item: ModelItem) -> EstimateItem:
+    """Numbers from the food database when the food is known, otherwise from the model."""
+    food = match_builtin_food(db, item.food)
+    if food is not None:
+        per_100g = (food.kcal_100g, food.protein_100g, food.carbs_100g, food.fat_100g)
+    else:
+        per_100g = (item.kcal_per_100g, item.protein_per_100g, item.carbs_per_100g, item.fat_per_100g)
+    if min(per_100g) < 0 or per_100g[0] > 1000:
+        raise AiEstimateError("The AI returned values outside the allowed range")
+
+    factor = item.grams / 100
+    kcal, protein, carbs, fat = per_100g
+    return EstimateItem(
+        name=item.food.strip(),
+        grams=round(item.grams),
+        calories=round(kcal * factor),
+        protein=round(protein * factor, 1),
+        carbs=round(carbs * factor, 1),
+        fat=round(fat * factor, 1),
+        database_food=food.name if food else None,
+    )
 
 
 # --- Ollama (local) -------------------------------------------------------------
@@ -80,7 +118,7 @@ def _ollama_ready() -> bool:
     return ready
 
 
-def _estimate_with_ollama(description: str) -> FoodEstimate:
+def _estimate_with_ollama(description: str) -> ModelEstimate:
     try:
         response = httpx.post(
             f"{settings.ollama_url}/api/chat",
@@ -91,9 +129,11 @@ def _estimate_with_ollama(description: str) -> FoodEstimate:
                     {"role": "user", "content": description},
                 ],
                 # Ollama constrains the output to this JSON schema
-                "format": FoodEstimate.model_json_schema(),
+                "format": ModelEstimate.model_json_schema(),
                 "stream": False,
-                "options": {"temperature": 0},
+                # Cap the length: with a JSON format, small models sometimes keep emitting
+                # whitespace after the object until they hit the limit.
+                "options": {"temperature": 0, "num_predict": 768},
             },
             # The first request also loads the model into memory, which takes a while
             timeout=httpx.Timeout(120.0, connect=3.0),
@@ -108,7 +148,7 @@ def _estimate_with_ollama(description: str) -> FoodEstimate:
     response.raise_for_status()
 
     try:
-        return FoodEstimate.model_validate_json(response.json()["message"]["content"])
+        return ModelEstimate.model_validate_json(response.json()["message"]["content"])
     except (KeyError, ValidationError):
         raise AiEstimateError("The local AI model returned an answer the app couldn't read") from None
 
@@ -121,7 +161,7 @@ def _claude_client() -> anthropic.Anthropic:
     return anthropic.Anthropic(api_key=settings.anthropic_api_key, timeout=60.0, max_retries=2)
 
 
-def _estimate_with_claude(description: str) -> FoodEstimate:
+def _estimate_with_claude(description: str) -> ModelEstimate:
     if not settings.anthropic_api_key:
         raise AiNotConfiguredError("No Anthropic API key is set")
 
@@ -136,7 +176,7 @@ def _estimate_with_claude(description: str) -> FoodEstimate:
         output_config={"effort": "low"},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": description}],
-        output_format=FoodEstimate,
+        output_format=ModelEstimate,
         **extra,
     )
     if response.stop_reason == "refusal" or response.parsed_output is None:

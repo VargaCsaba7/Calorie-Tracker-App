@@ -4,8 +4,9 @@ import { mealsApi } from '../api/meals'
 import type { Meal } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { DateSwitcher } from '../components/DateSwitcher'
+import { useConfirm } from '../confirm/useConfirm'
 import { BarbellMeter } from '../components/nutrition/BarbellMeter'
-import { MealForm } from '../components/nutrition/MealForm'
+import { AddMealPanel } from '../components/nutrition/AddMealPanel'
 import { MealList } from '../components/nutrition/MealList'
 import { Alert } from '../components/ui/Alert'
 import { Card } from '../components/ui/Card'
@@ -14,6 +15,7 @@ import { formatDate, today } from '../lib/date'
 
 export function NutritionPage() {
   const { user } = useAuth()
+  const confirm = useConfirm()
   const [date, setDate] = useState(today())
   const summary = useApi(() => mealsApi.summary(date), [date])
   const meals = useApi(() => mealsApi.list({ date_from: date, date_to: date }), [date])
@@ -25,7 +27,13 @@ export function NutritionPage() {
   }
 
   async function handleDelete(meal: Meal) {
-    if (!window.confirm(`Delete "${meal.name}"?`)) return
+    const confirmed = await confirm({
+      title: `Delete "${meal.name}"?`,
+      message: `${meal.calories} kcal will be removed from this day. This can't be undone.`,
+      confirmLabel: 'Delete meal',
+      tone: 'danger',
+    })
+    if (!confirmed) return
     setDeleteError(null)
     try {
       await mealsApi.remove(meal.id)
@@ -58,9 +66,8 @@ export function NutritionPage() {
         />
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
         <div className="min-w-0 space-y-6">
-
           <Card title="Meals">
             <div className="space-y-3">
               <Alert message={meals.error ?? deleteError} />
@@ -74,7 +81,7 @@ export function NutritionPage() {
         </div>
 
         <Card title="Add a meal" className="lg:self-start">
-          <MealForm date={date} onSaved={refresh} />
+          <AddMealPanel date={date} onSaved={refresh} />
         </Card>
       </div>
     </div>

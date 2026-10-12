@@ -96,10 +96,82 @@ export interface Meal {
   protein: number
   carbs: number
   fat: number
+  /** Set when the meal was picked from the food database */
+  grams: number | null
+  food: { id: number; image_url: string | null; emoji: string | null; brand: string | null } | null
 }
 
-export type MealInput = Omit<Meal, 'id'>
-export type MealUpdate = Partial<MealInput>
+/** Entered by hand */
+export interface MealInput {
+  name: string
+  date: string
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+}
+
+/** Picked from the food database: the server calculates the numbers */
+export interface MealFromFoodInput {
+  date: string
+  food_id: number
+  grams: number
+}
+
+export type MealUpdate = Partial<MealInput> & { grams?: number }
+
+// --- Foods ---
+
+export interface Food {
+  id: number
+  name: string
+  brand: string | null
+  source: 'builtin' | 'off'
+  image_url: string | null
+  emoji: string | null
+  kcal_100g: number
+  protein_100g: number
+  carbs_100g: number
+  fat_100g: number
+  serving_g: number | null
+}
+
+export interface FoodSearchResult {
+  foods: Food[]
+  online_search_ok: boolean
+}
+
+export interface EstimateItem {
+  name: string
+  grams: number
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  /** Set when the numbers come from the app's food database instead of the AI */
+  database_food: string | null
+}
+
+/** The AI's estimate for the whole described meal: its foods plus their totals */
+export interface FoodEstimate {
+  name: string
+  portion_grams: number
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  items: EstimateItem[]
+}
+
+export interface PersonalRecord {
+  exercise: string
+  best_weight: number
+  best_weight_reps: number
+  best_weight_date: string
+  estimated_1rm: number | null
+  max_reps: number
+  times_trained: number
+}
 
 export interface DailyNutritionSummary {
   date: string
@@ -110,6 +182,28 @@ export interface DailyNutritionSummary {
   meal_count: number
   calorie_goal: number
   calories_remaining: number
+}
+
+// --- Progress ---
+
+export interface RestDay {
+  date: string
+}
+
+export interface WeightEntry {
+  date: string
+  weight_kg: number
+}
+
+export interface WeeklyStats {
+  week_start: string
+  workouts: number
+  volume_kg: number
+  rest_days: number
+  days_logged: number
+  avg_calories: number | null
+  avg_protein: number | null
+  avg_weight_kg: number | null
 }
 
 export interface ListParams {

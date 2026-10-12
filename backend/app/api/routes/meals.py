@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, DbSession
-from app.models import Meal, User
+from app.models import Food, Meal, User
 from app.schemas import DailyNutritionSummary, MealCreate, MealRead, MealUpdate
 
 router = APIRouter(prefix="/meals", tags=["meals"])
@@ -71,9 +71,29 @@ def daily_summary(
     )
 
 
+def _apply_food(meal: Meal, food: Food, grams: float) -> None:
+    """Copies the food's per-100 g values, scaled to the eaten amount, onto the meal."""
+    factor = grams / 100
+    meal.grams = grams
+    meal.calories = round(food.kcal_100g * factor)
+    meal.protein = round(food.protein_100g * factor, 1)
+    meal.carbs = round(food.carbs_100g * factor, 1)
+    meal.fat = round(food.fat_100g * factor, 1)
+
+
 @router.post("", response_model=MealRead, status_code=status.HTTP_201_CREATED)
 def create_meal(payload: MealCreate, db: DbSession, user: CurrentUser) -> Meal:
-    meal = Meal(user_id=user.id, **payload.model_dump())
+    if payload.food_id is not None:
+        food = db.get(Food, payload.food_id)
+        if food is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food not found")
+        meal = Meal(user_id=user.id, date=payload.date, food=food, name=(payload.name or food.name)[:100])
+        _apply_food(meal, food, payload.grams or 100)
+    else:
+        meal = Meal(
+            user_id=user.id,
+            **payload.model_dump(include={"date", "name", "calories", "protein", "carbs", "fat"}),
+        )
     db.add(meal)
     db.commit()
     return meal
@@ -87,8 +107,15 @@ def get_meal(meal_id: int, db: DbSession, user: CurrentUser) -> Meal:
 @router.patch("/{meal_id}", response_model=MealRead)
 def update_meal(meal_id: int, payload: MealUpdate, db: DbSession, user: CurrentUser) -> Meal:
     meal = _get_owned_meal(db, meal_id, user)
-    for field, value in payload.model_dump(exclude_unset=True, exclude_none=True).items():
+    changes = payload.model_dump(exclude_unset=True, exclude_none=True)
+    grams = changes.pop("grams", None)
+    for field, value in changes.items():
         setattr(meal, field, value)
+    if grams is not None:
+        if meal.food is not None:
+            _apply_food(meal, meal.food, grams)
+        else:
+            meal.grams = grams
     db.commit()
     return meal
 

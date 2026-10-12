@@ -1,5 +1,7 @@
 from app.schemas.auth import Token
+from app.schemas.food import AiStatus, FoodEstimate, FoodEstimateRequest, FoodRead, FoodSearchResult
 from app.schemas.meal import DailyNutritionSummary, MealCreate, MealRead, MealUpdate
+from app.schemas.progress import PersonalRecord, RestDayRead, WeeklyStats, WeightEntryRead, WeightEntryWrite
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.schemas.workout import (
     ExerciseCreate,
@@ -27,4 +29,14 @@ __all__ = [
     "MealRead",
     "MealUpdate",
     "DailyNutritionSummary",
+    "FoodRead",
+    "FoodSearchResult",
+    "FoodEstimate",
+    "FoodEstimateRequest",
+    "AiStatus",
+    "PersonalRecord",
+    "RestDayRead",
+    "WeightEntryRead",
+    "WeightEntryWrite",
+    "WeeklyStats",
 ]

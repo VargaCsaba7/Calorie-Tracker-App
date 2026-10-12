@@ -19,6 +19,13 @@ if exist "C:\xampp\mysql\bin\mysql.exe" (
     "C:\xampp\mysql\bin\mysql.exe" -u root -e "CREATE DATABASE IF NOT EXISTS calorie_tracker CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 )
 
+rem ---- Ollama (free local AI for meal estimates, optional) ----
+netstat -an | find ":11434" | find "LISTENING" >nul
+if errorlevel 1 if exist "%LOCALAPPDATA%\Programs\Ollama\ollama app.exe" (
+    echo Starting Ollama...
+    start "" "%LOCALAPPDATA%\Programs\Ollama\ollama app.exe"
+)
+
 rem ---- Backend: create the venv and .env on first run ----
 if not exist "backend\.venv\Scripts\python.exe" (
     echo Setting up the Python environment, this takes a minute...

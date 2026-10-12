@@ -37,8 +37,8 @@ def estimate(payload: FoodEstimateRequest, _user: CurrentUser) -> FoodEstimate:
     """Estimates calories and macros for a described meal. Nothing is saved."""
     try:
         return estimate_food(payload.description)
-    except AiNotConfiguredError:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "AI estimates are not set up on this server") from None
+    except AiNotConfiguredError as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, f"AI estimates are not available: {exc}") from None
     except AiEstimateError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from None
     except anthropic.AuthenticationError:

@@ -22,7 +22,8 @@ export function AiEstimate({ enabled, onReview }: AiEstimateProps) {
   if (!enabled) {
     return (
       <p className="rounded-xl bg-chalk p-4 text-sm text-brand-500">
-        AI estimates aren’t set up on this server yet. Search for a food or enter the meal by hand.
+        The AI isn’t available right now. Make sure Ollama is running (it starts with start.bat), or search
+        for a food or enter the meal by hand.
       </p>
     )
   }

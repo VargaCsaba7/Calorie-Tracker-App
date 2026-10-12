@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,9 +20,12 @@ class Settings(BaseSettings):
 
     cors_origins: list[str] = ["http://localhost:5173"]
 
-    # AI meal estimate (optional). Without a key the feature is simply turned off.
+    # AI meal estimate (optional). "ollama" runs a free model locally; "anthropic" uses Claude.
+    ai_provider: Literal["ollama", "anthropic"] = "ollama"
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen2.5:7b"
     anthropic_api_key: str | None = None
-    ai_model: str = "claude-opus-5-5"
+    anthropic_model: str = "claude-opus-5-5"
 
 
 @lru_cache

@@ -75,14 +75,23 @@ All endpoints except register and login need an `Authorization: Bearer <token>` 
 
 ## AI meal estimate (optional)
 
-On the Nutrition page, "Describe (AI)" sends a short description ("a plate of goulash with two slices of bread")
-to Claude, which answers in a fixed JSON schema (structured outputs) with calories and macros. The estimate only
-pre-fills the manual form, so the user checks it before saving.
+On the Nutrition page, "Describe (AI)" sends a short description ("egy tányér gulyásleves két szelet kenyérrel")
+to a language model, which answers in a fixed JSON schema (structured outputs) with the portion size, calories and
+macros. The estimate only pre-fills the manual form, so the user checks it before saving.
 
-To turn it on, add an API key from https://console.anthropic.com to `backend/.env`:
+**Default: free and local with [Ollama](https://ollama.com).** No account or API key, nothing leaves your machine.
+
+```bash
+ollama pull qwen2.5:7b
+```
+
+`start.bat` starts Ollama if it's installed. Any other Ollama model works too (`OLLAMA_MODEL` in `backend/.env`).
+
+**Alternative: Claude** (paid, more accurate). In `backend/.env`:
 
 ```
+AI_PROVIDER=anthropic
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Without a key everything else works and the AI tab says it isn't set up.
+If the selected provider isn't available, everything else still works and the AI tab says so.
